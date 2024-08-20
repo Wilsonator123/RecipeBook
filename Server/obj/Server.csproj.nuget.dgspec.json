@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Work\\RecipeBook\\Server\\Server.csproj": {}
+    "C:\\Work\\RecipeBook\\server\\Server.csproj": {}
   },
   "projects": {
-    "C:\\Work\\RecipeBook\\Server\\Server.csproj": {
+    "C:\\Work\\RecipeBook\\server\\Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Work\\RecipeBook\\Server\\Server.csproj",
+        "projectUniqueName": "C:\\Work\\RecipeBook\\server\\Server.csproj",
         "projectName": "Server",
-        "projectPath": "C:\\Work\\RecipeBook\\Server\\Server.csproj",
+        "projectPath": "C:\\Work\\RecipeBook\\server\\Server.csproj",
         "packagesPath": "C:\\Users\\George\\.nuget\\packages\\",
-        "outputPath": "C:\\Work\\RecipeBook\\Server\\obj\\",
+        "outputPath": "C:\\Work\\RecipeBook\\server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
