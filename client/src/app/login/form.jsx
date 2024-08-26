@@ -11,6 +11,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import Link from 'next/link'
 
 export default function LoginForm()
 {
@@ -24,35 +25,38 @@ export default function LoginForm()
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-1/3 flex align-center mt-20 flex-col">
+                <h1 className="!mb-[-10px] text-2xl">Sign in</h1>
                 <FormField
                     control={form.control}
+                    {...form.register("email", {required:true, pattern: /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/})}
                     name="email"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                                <Input placeholder="Email" {...field} />
+                                <Input  placeholder="Email" type="email" {...field} />
                             </FormControl>
                         </FormItem>
                     )}
                 />
                 <FormField
                     control={form.control}
+                    {...form.register("password", {required:true})}
                     name="password"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
                                 <Input placeholder="Password" type="password" {...field} />
                             </FormControl>
-                            <div className="underline text-sm">Forgot your password?</div>
                         </FormItem>
                     )}
-
                 />
+                <FormDescription className="underline text-sm float-right self-end !mt-3"><Link href="#">Forgot your
+                    password?</Link></FormDescription>
 
-                <Button type="submit">Sign in</Button>
+                <Button className="text-white" variant="secondary" type="submit">Sign in</Button>
             </form>
         </Form>
     )
