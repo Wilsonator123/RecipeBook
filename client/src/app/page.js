@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Hero from '@/assets/hero.png';
+import Second from '@/assets/AIFood.png'
 export default function Page() {
 
   return (
@@ -21,12 +22,12 @@ export default function Page() {
                   <Image src={Hero} alt="logo"/>
               </div>
           </div>
-          <div className="mx-10 relative flex items-center min-h-[45rem]">
-              <div className="absolute left-5 bg-[#F7F7F7] border w-[850px] h-[550px] ">
+          <div className="mx-20 relative flex items-center min-h-[45rem]">
+              <div className="absolute left-20 bg-[#F7F7F7] border w-[850px] h-[550px] ">
 
               </div>
 
-              <div className="flex bg-white absolute z-10 w-[500px] h-[450px] p-4 flex-col right-[15%]">
+              <div className="flex bg-white absolute z-10 w-[500px] h-[450px] p-4 flex-col right-[20%] border border-primary">
                   <h1 className="text-3xl pb-5 leading-[50.94px]">Import recipes from websites, book and more</h1>
                   <p className="text-xl">RecipeBook allows you to import your favourite recipes from websites, videos
                       and books where they can be stored, edited and viewed.
@@ -37,12 +38,12 @@ export default function Page() {
                   </p>
               </div>
           </div>
-          <div className="mx-10 relative flex items-center min-h-[45rem]">
-              <div className="absolute right-5 bg-[#F7F7F7] border w-[850px] h-[550px] ">
-
+          <div className="mx-20 relative flex items-center min-h-[45rem]">
+              <div className="absolute right-20 bg-[#F7F7F7] border w-[850px] h-[550px] object-fill">
+                <Image src={Second}  alt="Turning ingredients into meals with AI " width="850" height="550" />
               </div>
 
-              <div className="flex bg-white absolute z-10 w-[500px] h-[450px] p-4 flex-col left-[15%]">
+              <div className="flex bg-white absolute z-10 w-[500px] h-[450px] p-4 flex-col left-[20%] border border-primary">
                   <h1 className="text-3xl pb-5 leading-[50.94px]">Use AI to turn your ingredients into meals</h1>
                   <p className="text-xl">RecipeBook personalized AI is used to turn your random ingredients into delicious and nutritious meals
                       <br/><br/>
