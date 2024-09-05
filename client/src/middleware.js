@@ -11,7 +11,7 @@ export async function middleware(request) {
         }
     }
 
-    if (request.nextUrl.pathname.startsWith('/app'))
+    if (request.nextUrl.pathname.startsWith('/pp'))
     {
         return NextResponse.redirect(new URL('/login', url))
     }

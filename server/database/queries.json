@@ -1,0 +1,42 @@
+{
+  "uuidChecker": {
+    "query": "SELECT * FROM customer WHERE Email = @1",
+    "noParams": 1
+  },
+  "isUUIDtaken": {
+    "query": "SELECT * FROM customer WHERE userid = @1",
+    "noParams": 1
+  },
+  "isEmail": {
+    "query":"SELECT * FROM customer WHERE email = @1",
+    "noParams": 1
+  },
+  "addUser": {
+    "query": "INSERT INTO customer (UserID, Email, Fname, Lname) VALUES (@1, @2, @3, @4)",
+    "noParams": 4
+  },
+  "addPassword": {
+    "query": "INSERT INTO Password (UserID, Password) VALUES (@1, @2)",
+    "noParams": 2
+  },
+  "getUserID": {
+    "query": "SELECT userid FROM customer WHERE Email = @1",
+    "noParams": 1
+  },
+  "getUserSalt": {
+    "query": "SELECT salt FROM Password WHERE userid = @1",
+    "noParams": 1
+  },
+  "getPassword": {
+    "query": "SELECT password FROM Password WHERE userid = @1",
+    "noParams": 1
+  },
+  "getUser": {
+    "query": "SELECT * FROM customer WHERE UserID = (@1)",
+    "noParams": 1
+  },
+  "getUserByEmail": {
+    "query": "SELECT * FROM customer WHERE email = @1",
+    "noParams": 1
+  }
+}

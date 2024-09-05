@@ -1,7 +1,7 @@
 'use client'
 import Logo from '../assets/logo.svg';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
     DropdownMenu,
@@ -16,6 +16,7 @@ import {
 
 export default function Navbar() {
     const pathname = usePathname();
+    const router = useRouter();
 
     const isActive = (active) => {
         console.log(pathname)
@@ -59,8 +60,8 @@ export default function Navbar() {
                         <DropdownMenuContent>
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Profile</DropdownMenuItem>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => router.push('/account')}>Profile</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => router.push('/account?settings')}>Settings</DropdownMenuItem>
                             <DropdownMenuItem>Log out</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
