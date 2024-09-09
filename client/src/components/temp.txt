@@ -1,0 +1,84 @@
+'use client'
+import * as React from "react"
+import { Button } from "@/components/ui/button"
+import {
+    Command,
+    CommandGroup,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import NewItemPopup from "@/components/newItemPopup"
+
+const frameworks = [
+    {
+        value: "website",
+        label: "From Website",
+        component: <NewItemPopup title="New Recipe From Website" description="Paste URL" inputName="URL"/>
+    },
+    {
+        value: "video",
+        label: "From Video",
+        component: <NewItemPopup title="New Recipe From Video" description="Paste URL" inputName="URL"/>
+    },
+    {
+        value: "book",
+        label: "From Book",
+        component: <NewItemPopup title="New Recipe From Book" description="Upload images" inputName="Images"/>
+    },
+    {
+        value: "custom",
+        label: "Custom",
+        component: <NewItemPopup title="New Item" description="Add a new item" inputName="Item Name"/>
+    }
+]
+
+export function NewButton() {
+    const [open, setOpen] = React.useState(false)
+    const [dialogOpen, setDialogOpen] = React.useState(false)
+
+    return (
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="secondary"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="justify-between text-white text-lg"
+                >
+                    New +
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[150px] p-0">
+                <Command>
+                    <CommandList>
+                        <CommandGroup>
+                            {frameworks.map((framework) => (
+                                <CommandItem
+                                    key={framework.value}
+                                    value={framework.value}
+                                    onSelect={() => {
+                                        setOpen(false)
+                                        setDialogOpen(true)
+                                    }}
+                                >
+                                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button variant="outline">{framework.label}</Button>
+                                            </DialogTrigger>
+                                            {framework.component}
+                                        </Dialog>
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
+    )
+}

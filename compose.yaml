@@ -8,12 +8,11 @@ services:
     restart: always
     build:
       context: ./server
-      target: builder
     stop_signal: SIGINT
     volumes:
       - ./server:/app/server
     ports:
-      - '8000:8000'
+      - '5000:5000'
   db:
     image: postgres
     restart: always
@@ -26,8 +25,9 @@ services:
       - ./server/database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=dss
+      - POSTGRES_USER=root
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      - POSTGRES_DB=RecipeBook
     expose:
       - 5432
     healthcheck:
@@ -35,23 +35,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-#  mongo:
-#    image: mongo
-#    restart: always
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: dbUser
-#      MONGO_INITDB_ROOT_PASSWORD: Bulstrode_52
-#    volumes:
-#      - mongo-data:/data/db
-#    expose:
-#      - 27017
-#    ports:
-#      - 27017:27017
-#    healthcheck:
-#      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=dbUser
+      - MONGO_INITDB_ROOT_PASSWORD=/run/secrets/mongo
+    volumes:
+      - mongo-data:/data/db
+      - ./server/db/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   db-data:
   mongo-data:
@@ -59,4 +60,4 @@ secrets:
   db-password:
     file: ./server/db/password.txt
   mongo:
-    file: ./server/db/mongo.txt
+    file: ./server/db/password.txt

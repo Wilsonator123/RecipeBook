@@ -1,0 +1,27 @@
+db.createCollection("recipes", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "created_at", "userid", "type", "ingredients", "instructions"],
+      properties: {
+        name: { bsonType: "string", description: "must be a string and is required" },
+        created_at: { bsonType: "date", description: "must be a date and is required" },
+        userid: { bsonType: "string", description: "must be a string and is required" },
+        type: { bsonType: "string", description: "must be a string and is required" },
+        ingredients: {
+          bsonType: "array",
+          items: {
+            bsonType: "object",
+            required: ["name", "quantity", "unit"],
+            properties: {
+              name: { bsonType: "string", description: "must be a string and is required" },
+              quantity: { bsonType: "int", description: "must be an integer and is required" },
+              unit: { bsonType: "string", description: "must be a string and is required" }
+            }
+          }
+        },
+        instructions: { bsonType: "array", items: { bsonType: "string" }, description: "must be an array of strings and is required" }
+      }
+    }
+  }
+});

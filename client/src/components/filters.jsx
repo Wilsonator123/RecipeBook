@@ -12,9 +12,15 @@ import {DatePicker} from "@/components/datepicker";
 
 export default function Filters(){
     const [tag, setTag] = useState("");
+    const [tags, setTags] = useState([]);
     const handleSubmit = (e) => {
         e.preventDefault()
+        setTags([...tags, tag])
         setTag("")
+    }
+
+    const handleDelete = (index) => {
+        setTags(tags.filter((tag, i) => i !== index));
     }
 
     return (
@@ -32,9 +38,13 @@ export default function Filters(){
                     </div>
                 </form>
 
+                {tags.length > 0 &&
             <div className="border p-2 flex gap-3 w-full max-h-[100px] rounded">
-                    <Tag />
+                {tags.map((tag, index) => (
+                    <Tag value={tag} key={index} index={index} onClose={handleDelete} />
+                ))}
                 </div>
+                }
             </div>
             <Separator/>
             <div className="flex flex-col gap-2">

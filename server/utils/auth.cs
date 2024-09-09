@@ -55,25 +55,19 @@ class Auth
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var username = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var usernameClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) 
+                                ?? jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
 
-            return username;
+            if (usernameClaim == null)
+            {
+                return null;
+            }
+
+            return usernameClaim.Value;
         }
-        catch
+        catch (Exception e)
         {
             return null;
         }
-    }
-    
-    public static HttpContext SetCookie(HttpContext context, string token)
-    {
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTime.UtcNow.AddDays(14)
-        };
-        context.Response.Cookies.Append("userid", token, cookieOptions);
-        
-        return context;
     }
 }

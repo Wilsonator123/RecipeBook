@@ -12,16 +12,29 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import Link from 'next/link'
+import axios from "axios";
+import {useRouter} from 'next/navigation'
+import {updateUser} from "@/hooks/user";
 
 export default function LoginForm()
 {
+    const router = useRouter();
+
     const form = useForm();
 
-    function onSubmit(values) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
-    }
+    const onSubmit = (data) => {
+        axios
+            .post("http://localhost:5000/user/login", data, {
+                withCredentials: true,
+            })
+            .then(async (res) => {
+                await updateUser();
+                router.push("/app");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     return (
         <Form {...form}>

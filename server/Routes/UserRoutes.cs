@@ -1,6 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 using server.user;
 using server.Data;
@@ -10,48 +8,50 @@ namespace server.Routes
 {
     public static class UserRoutes
     {
-        // Corrected the method name to match the call in Program.cs
         public static IApplicationBuilder UseUserRoutes(this IApplicationBuilder builder)
         {
             return builder.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/user/getUser", async context =>
                 {
-                    using var reader = new StreamReader(context.Request.Body);
-                    var body = await reader.ReadToEndAsync();
-                    
-                    if (string.IsNullOrWhiteSpace(body))
-                    {
-                        context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync("Invalid request body");
-                        return;
-                    }
-                    
-                    var userData = JsonSerializer.Deserialize<GetUserRequest>(body);
+                    var cookie = CookieHelper.GetUserIdFromCookies(context);
 
-                    if (userData == null)
+                    if (string.IsNullOrWhiteSpace(cookie))
                     {
                         context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync("Invalid request body");
+                        await context.Response.WriteAsync("User ID cookie not found");
                         return;
                     }
 
-                    var validationResults = new List<ValidationResult>();
-                    var validationContext = new ValidationContext(userData);
-                    if (!Validator.TryValidateObject(userData, validationContext, validationResults, true))
+                    string userId = Auth.ValidateToken(cookie);
+
+                    if (string.IsNullOrWhiteSpace(userId))
                     {
-                        var errors = validationResults.Select(vr => vr.ErrorMessage).ToArray();
                         context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(errors));
+                        await context.Response.WriteAsync("Invalid token");
                         return;
                     }
+
+                    Response response = await User.GetUser(userId);
+
                     
-                    Response response = await User.GetUser(userData.email, userData.userid);
-                    
+
                     if (response.Status)
                     {
                         context.Response.StatusCode = 200;
                         context.Response.ContentType = "application/json";
+                        
+                        if (response.Data is object[] data && data.Length >= 4)
+                        {
+                            response.Data = new UserResponse
+                            {
+                                id = data[0]?.ToString(),
+                                email = data[1]?.ToString(),
+                                fname = data[2]?.ToString(),
+                                lname = data[3]?.ToString()
+                            };
+                        }
+                        
                         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
                         return;
                     }
@@ -66,42 +66,21 @@ namespace server.Routes
 
                 endpoints.MapPost("/user/createUser", async context =>
                 {
-                    using var reader = new StreamReader(context.Request.Body);
-                    var body = await reader.ReadToEndAsync();
-                    
-                    if (string.IsNullOrWhiteSpace(body))
+                    var (isValid, userData) = await ValidateBody.Validate<CreateUserRequest>(context);
+                    if (!isValid)
                     {
                         context.Response.StatusCode = 400;
                         await context.Response.WriteAsync("Invalid request body");
                         return;
                     }
                     
-                    var userData = JsonSerializer.Deserialize<CreateUserRequest>(body);
-                    
-                    if (userData == null)
-                    {
-                        context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync("Invalid request body");
-                        return;
-                    }
-                    
-                    var validationResults = new List<ValidationResult>();
-                    var validationContext = new ValidationContext(userData);
-                    if (!Validator.TryValidateObject(userData, validationContext, validationResults, true))
-                    {
-                        var errors = validationResults.Select(vr => vr.ErrorMessage).ToArray();
-                        context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(errors));
-                        return;
-
-                    }
                     
                     Response response = await User.CreateUser(userData.email, userData.fname, userData.lname, userData.password);
                     
                     if (response.Status)
                     {
                         string token = Auth.GenerateToken(response.Data.ToString());
-                        context = Auth.SetCookie(context, token);
+                        context = CookieHelper.SetCookie(context, token);
                         context.Response.StatusCode = 201;
                         context.Response.ContentType = "application/json";
                         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
@@ -116,34 +95,14 @@ namespace server.Routes
                     }
                 });
                 
-                endpoints.MapGet("/user/login", async context =>
+                endpoints.MapPost("/user/login", async context =>
                 {
-                    using var reader = new StreamReader(context.Request.Body);
-                    var body = await reader.ReadToEndAsync();
+                    var (isValid, userData) = await ValidateBody.Validate<LoginRequest>(context);
                     
-                    if (string.IsNullOrWhiteSpace(body))
+                    if (!isValid)
                     {
                         context.Response.StatusCode = 400;
                         await context.Response.WriteAsync("Invalid request body");
-                        return;
-                    }
-                    
-                    var userData = JsonSerializer.Deserialize<LoginRequest>(body);
-
-                    if (userData == null)
-                    {
-                        context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync("Invalid request body");
-                        return;
-                    }
-
-                    var validationResults = new List<ValidationResult>();
-                    var validationContext = new ValidationContext(userData);
-                    if (!Validator.TryValidateObject(userData, validationContext, validationResults, true))
-                    {
-                        var errors = validationResults.Select(vr => vr.ErrorMessage).ToArray();
-                        context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(errors));
                         return;
                     }
                     
@@ -152,7 +111,7 @@ namespace server.Routes
                     if (response.Status)
                     {
                         string token = Auth.GenerateToken(response.Data.ToString());
-                        context = Auth.SetCookie(context, token);
+                        context = CookieHelper.SetCookie(context, token);
                         context.Response.StatusCode = 200;
                         context.Response.ContentType = "application/json";
                         await context.Response.WriteAsync(JsonSerializer.Serialize(response));

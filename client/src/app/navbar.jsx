@@ -1,6 +1,8 @@
 'use client'
 import Logo from '../assets/logo.svg';
 import Link from 'next/link';
+import { useUserStore } from "@/stores/userStore";
+import {logout, updateUser} from "@/hooks/user"
 import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -12,20 +14,30 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
 
+    const [showHeader, setShowHeader] = useState(false);
+
     const isActive = (active) => {
-        console.log(pathname)
         return pathname === active
     }
 
     const isHome = () => {
         return pathname.startsWith('/app')
     }
+
+    useEffect(() => {
+        async function fetchUser() {
+            await updateUser().then(setShowHeader(true));
+        }
+        fetchUser();
+    }, []);
+
+    const user = useUserStore((state) => state.user);
 
     return (
 
@@ -42,8 +54,9 @@ export default function Navbar() {
                     <Link href="#" className={`${isActive('/app/ai') && "bg-primary text-white underline"} rounded-3xl px-4 py-2 m-0`}>Chat Bot</Link>
                 </div>
             }
+            {showHeader &&
             <div className="flex gap-8 items-center">
-                {false ?
+                {!user ?
                     <>
                         <Link href='/login' className="text-lg">Login</Link>
                         <Link href='/login?signup=true' className="text-lg bg-primary text-white rounded-3xl px-4 py-2">Sign up</Link>
@@ -51,7 +64,7 @@ export default function Navbar() {
                     :
                     <DropdownMenu>
                     <DropdownMenuTrigger className="flex items-center gap-3 focus:outline-none focus-visible:outline-none active:outline-none ring-0">
-                            <h1>Hi, George!</h1>
+                            <h1>Hi, {user?.fname}!</h1>
                             <Avatar>
                                 <AvatarImage src="https://github.com/shadcn.png" />
                                 <AvatarFallback>CN</AvatarFallback>
@@ -62,12 +75,13 @@ export default function Navbar() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => router.push('/account')}>Profile</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => router.push('/account?settings')}>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Log out</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => logout()}>Log out</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 }
 
             </div>
+            }
         </div>
     )
 }

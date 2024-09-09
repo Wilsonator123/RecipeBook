@@ -29,7 +29,7 @@ export default function Page(){
         <div className="mx-20 my-10 border p-8 h-[80rem] flex flex-col">
             <div className="flex items-center justify-between mb-3">
                 <h1 className="text-2xl">Your Recipes</h1>
-                <NewButton/>
+                <NewButton />
             </div>
 
             <div className="flex flex-row gap-10">

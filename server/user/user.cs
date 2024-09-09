@@ -9,23 +9,13 @@ namespace server.user;
 
 public static class User
 {
-    public static async Task<Response> GetUser(string email = "", string userid = "")
+    public static async Task<Response> GetUser(string userid)
     {
-        if (string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(userid))
-        {
-            return new Response(false, "Either email or userid must be provided");
-        }
-
         List<Object[]> rows;
         
-        if (string.IsNullOrWhiteSpace(email) )
-        {
-             rows = await Database.Query("getUser", [userid]);
-        }
-        else
-        {
-            rows = await Database.Query("getUserByEmail", [email]);
-        }
+
+        rows = await Database.Query("getUser", [userid]);
+
         
         if (rows == null || rows.Count == 0)
         {
