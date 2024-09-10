@@ -15,7 +15,7 @@ db.createCollection("recipes", {
             required: ["name", "quantity", "unit"],
             properties: {
               name: { bsonType: "string", description: "must be a string and is required" },
-              quantity: { bsonType: "int", description: "must be an integer and is required" },
+              quantity: { bsonType: "string", description: "must be an string and is required" },
               unit: { bsonType: "string", description: "must be a string and is required" }
             }
           }

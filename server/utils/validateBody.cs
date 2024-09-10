@@ -28,7 +28,8 @@ public static class ValidateBody
         var validationContext = new ValidationContext(userData);
         if (!Validator.TryValidateObject(userData, validationContext, validationResults, true))
         {
-            var errors = validationResults.Select(vr => vr.ErrorMessage).ToArray();
+            var errors = validationResults.Select(vr => vr.ErrorMessage);
+            Console.WriteLine(string.Join(',', errors));
             return (false, default);
         }
 

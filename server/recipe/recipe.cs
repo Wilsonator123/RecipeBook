@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.SignalR;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using server.Data;
 using server.database;
@@ -21,10 +23,35 @@ public static class Recipe
         return recipe != null ? new Response(true, "Recipe found", recipe) : new Response(false, "Recipe not found");
     }
     
-    public static async Task<Response> CreateRecipe(RecipeItem recipe)
+    public static async Task<Response> CreateRecipe(string userid, CreateRecipeRequest userData)
     {
-        await Mongo.Recipes.InsertOneAsync(recipe);
-        return new Response(true, "Recipe created", recipe);
+        try
+        {
+            var id = ObjectId.GenerateNewId().ToString();
+            
+            var recipe = new RecipeItem
+            {
+                Id = id,
+                Name = userData.Name,
+                CreatedAt = DateTime.UtcNow,
+                UserId = userid,
+                Url = userData.Url,
+                Type = userData.Type,
+                Ingredients = userData.Ingredients,
+                Rating = userData.Rating,
+                Tags = userData.Tags,
+                Instructions = userData.Instructions
+            };
+
+            await Mongo.Recipes.InsertOneAsync(recipe);
+            
+            return new Response(true, "Recipe created", recipe);
+        }
+        catch (Exception e)
+        {
+            return new Response(false, e.Message);
+        }
+
     }
     
     public static async Task<Response> UpdateRecipe(RecipeItem recipe)

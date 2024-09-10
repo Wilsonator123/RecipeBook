@@ -64,10 +64,10 @@ namespace server.Data
         [BsonElement("name")]
         [Required(ErrorMessage = "Ingredient Name is required")]
         public string Name { get; set; }
-
+        
         [BsonElement("quantity")]
         [Required(ErrorMessage = "Quantity is required")]
-        public int Quantity { get; set; }
+        public string Quantity { get; set; }
 
         [BsonElement("unit")]
         [Required(ErrorMessage = "Unit is required")]
