@@ -30,7 +30,8 @@ app.UseMiddleware<JwtMiddleware>();
 
 app.MapGet("/health", async context =>
 {
-    await context.Response.WriteAsync("Hello World!");
+    WebscrapeResponse response = await WebScrape.GetRecipe("https://www.recipetineats.com/vietnamese-pork-noodle-bowls");
+    await context.Response.WriteAsJsonAsync(response);
 });
 
 app.UseUserRoutes();

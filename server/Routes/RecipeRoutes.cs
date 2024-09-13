@@ -38,22 +38,23 @@ public static class RecipeRoutes
                 }
             });
 
-            endpoints.MapGet("/recipe/getRecipe", async context =>
+            endpoints.MapGet("/recipe/getRecipe/{recipeid}", async context =>
             {
                 var cookie = CookieHelper.GetUserIdFromCookies(context);
 
                 string userId = Auth.ValidateToken(cookie);
-
-                var (isValid, userData) = await ValidateBody.Validate<GetRecipeRequest>(context);
-
-                if (!isValid)
+                
+                
+                var recipeId = (string)context.Request.RouteValues["recipeid"];
+                
+                if (string.IsNullOrWhiteSpace(recipeId))
                 {
                     context.Response.StatusCode = 400;
-                    await context.Response.WriteAsync("Invalid request body");
+                    await context.Response.WriteAsync("Invalid recipe id");
                     return;
                 }
-
-                Response response = await Recipe.GetRecipe(userId, userData.id);
+                
+                Response response = await Recipe.GetRecipe(userId, recipeId);
 
                 if (response.Status)
                 {
@@ -108,6 +109,61 @@ public static class RecipeRoutes
                 }
             });
 
+            endpoints.MapPost("/recipe/webscrape", async context =>
+            {
+                var cookie = CookieHelper.GetUserIdFromCookies(context);
+
+                string userId = Auth.ValidateToken(cookie);
+
+                var (isValid, userData) = await ValidateBody.Validate<WebscrapeRequest>(context);
+
+                if (!isValid)
+                {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("Invalid request body");
+                    return;
+                }
+
+                WebscrapeResponse response = await WebScrape.GetRecipe(userData.Url);
+                
+                if (response == null)
+                {
+                    context.Response.StatusCode = 400;
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                    return;
+                }
+
+                CreateRecipeRequest recipe = new CreateRecipeRequest()
+                {
+                    Name = response.Name,
+                    Url = response.Url,
+                    Type = response.Type,
+                    Ingredients = response.Ingredients,
+                    Instructions = response.Instructions,
+                    PrepTime = response.PrepTime,
+                    CookTime = response.CookTime,
+                    Serves = response.Serves,
+                    Images = response.Images
+                };
+                
+                Response createResponse = await Recipe.CreateRecipe(userId, recipe);
+
+                
+                if (createResponse.Status)
+                {
+                    context.Response.StatusCode = 200;
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(createResponse));
+                    return;
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("No recipes found");
+                    return;
+                }
+            });
         });
 
         // endpoints.MapPost("/recipe/updateRecipe", async context =>

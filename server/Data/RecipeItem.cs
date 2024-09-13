@@ -49,6 +49,22 @@ namespace server.Data
         [BsonElement("instructions")]
         [Required(ErrorMessage = "Instructions are required")]
         public string[] Instructions { get; set; }
+        
+        [BsonElement("serves")]
+        [DefaultValue(0)]
+        public int Serves { get; set; }
+        
+        [BsonElement("prep_time")]
+        [DefaultValue(0)]
+        public int PrepTime { get; set; }
+        
+        [BsonElement("cook_time")]
+        [DefaultValue(0)]
+        public int CookTime { get; set; }
+        
+        [BsonElement("images")]
+        [DefaultValue(new string[] { })]
+        public string[] Images { get; set; }
     }
 
     public enum SourceType

@@ -96,7 +96,7 @@ namespace server.Routes
                 });
                 
                 endpoints.MapPost("/user/login", async context =>
-                {
+                {   
                     var (isValid, userData) = await ValidateBody.Validate<LoginRequest>(context);
                     
                     if (!isValid)

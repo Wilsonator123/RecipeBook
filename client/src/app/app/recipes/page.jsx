@@ -1,29 +1,27 @@
+'use client'
+
 import { SortBy } from "@/components/sortby";
 import {NewButton} from "@/components/NewButton";
 import Filters from "@/components/filters";
 
-import ex1 from "@/assets/ex1.png"
-import ex2 from "@/assets/ex2.png"
-import ex3 from "@/assets/ex3.jpg"
-
 import FoodItem from "@/components/foodItem";
-
-const food = [
-    {
-        "title": "Spaghetti Carbonara",
-        "picture": ex1,
-    },
-    {
-        "title": "Pizza",
-        "picture": ex2
-    },
-    {
-        "title": "Butter Chicken",
-        "picture": ex3
-    }
-]
+import {useEffect, useState} from "react";
+import {getRecipes} from "@/hooks/recipe";
+import Link from "next/link";
 
 export default function Page(){
+
+    const [recipes, setRecipes] = useState([])
+    const [loading, setLoading] = useState(true)
+
+
+    useEffect(() => {
+        getRecipes()
+            .then((response) => {
+                setRecipes(response);
+                setLoading(false);
+            });
+    }, []);
 
     return (
         <div className="mx-20 my-10 border p-8 h-[80rem] flex flex-col">
@@ -46,18 +44,22 @@ export default function Page(){
                     </div>
                 </div>
             </div>
-            <div className="flex flex-row gap-10 h-full">
+            <div className="flex flex-row gap-10">
                 <div className="flex w-1/3 h-full  border-r">
                     <Filters/>
                 </div>
-                <div className="flex gap-5 w-full">
-                    {
-                        food.map((item, index) =>
-                            (
-                                <FoodItem title={item.title} picture={item.picture} key={index}/>
-                            ))
-                    }
+                { loading ? <div>Loading...</div> :
+                <div className="grid grid-cols-3 gap-5 h-auto w-full">
+                    { recipes.map((recipe, index) => {
+                        return (
+                            <FoodItem
+                                key={index}
+                                item={recipe}
+                            />
+                        );
+                    })}
                 </div>
+                }
             </div>
         </div>
     )

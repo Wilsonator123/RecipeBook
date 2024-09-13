@@ -9,8 +9,24 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { recipeByWebsite } from "@/hooks/recipe"
+import {useRouter} from "next/navigation";
 
-export default function NewButton({ title, description, inputName}) {
+export default function NewButton({ title, description, inputName }) {
+    const router = useRouter()
+
+    const onSubmit = async () => {
+        const input = document.getElementById("input").value
+        const response = await recipeByWebsite(input)
+
+        if (response) {
+            router.push(`/app/recipes/${response.Id}`)
+        } else {
+            alert("Recipe not found")
+        }
+
+    }
+
     return (
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -31,7 +47,7 @@ export default function NewButton({ title, description, inputName}) {
                 </div>
             </div>
             <DialogFooter>
-                <Button type="submit">Generate Page</Button>
+                <Button type="submit" onClick={() => onSubmit()}>Generate Page</Button>
             </DialogFooter>
         </DialogContent>
     )

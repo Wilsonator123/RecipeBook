@@ -1,19 +1,24 @@
 import {Card, CardContent, CardFooter} from "@/components/ui/card";
 import Image from "next/image";
+import {useState} from "react";
+import Link from "next/link";
 
-export default function FoodItem({title, picture})
-{
+export default function FoodItem({item}) {
+
+    const [recipe, setRecipe] = useState(item)
 
     return (
-    <div className="w-1/3 h-[300px]">
-            <Card className="h-full w-full">
-                <CardContent className="h-4/5 w-full p-1 mt-1 flex justify-center items-center">
-                    <Image alt="food" src={picture} className="h-full w-[90%]"/>
+    <Link href={`/app/recipes/${recipe.Id}`} className="w-full h-[300px]">
+            <Card className="h-full w-full overflow-hidden">
+                <CardContent className="relative h-4/5 w-full p-1 mt-1 flex justify-center items-center">
+                    {recipe.Images && recipe.Images.length > 0 && (
+                    <Image loader={() => recipe?.Images[0]} src={recipe.Images[0]} objectFit="contain" layout="fill" alt="Photo" className="w-full h-full"/>
+                        )}
                 </CardContent>
-                <CardFooter className="w-full border-t py-1 px-3">
-                    <p>{title}</p>
+                <CardFooter className="flex overflow-hidden w-full border-t py-1 px-3">
+                    <p>{recipe.Name}</p>
                 </CardFooter>
             </Card>
-        </div>
+        </Link>
     )
 }

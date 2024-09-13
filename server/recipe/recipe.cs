@@ -16,13 +16,24 @@ public static class Recipe
         var recipes = await Mongo.Recipes.Find(r => r.UserId == userid).ToListAsync();
         return new Response(true, "Recipes found", recipes);
     }
-    
+
     public static async Task<Response> GetRecipe(string userid, string id)
     {
-        var recipe = await Mongo.Recipes.Find(r => r.Id == id && r.UserId == userid).FirstOrDefaultAsync();
-        return recipe != null ? new Response(true, "Recipe found", recipe) : new Response(false, "Recipe not found");
+        try
+        {
+            var objectId = ObjectId.Parse(id);
+            var recipe = await Mongo.Recipes.Find(r => r.Id == id && r.UserId == userid).FirstOrDefaultAsync();
+            return recipe != null
+                ? new Response(true, "Recipe found", recipe)
+                : new Response(false, "Recipe not found");
+
+        }
+        catch (Exception e)
+        {
+            return new Response(false, "Invalid recipe id");
+        }
     }
-    
+
     public static async Task<Response> CreateRecipe(string userid, CreateRecipeRequest userData)
     {
         try
@@ -40,7 +51,11 @@ public static class Recipe
                 Ingredients = userData.Ingredients,
                 Rating = userData.Rating,
                 Tags = userData.Tags,
-                Instructions = userData.Instructions
+                Instructions = userData.Instructions,
+                Serves = userData.Serves,
+                PrepTime = userData.PrepTime,
+                CookTime = userData.CookTime,
+                Images = userData.Images
             };
 
             await Mongo.Recipes.InsertOneAsync(recipe);

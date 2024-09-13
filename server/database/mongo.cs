@@ -1,5 +1,6 @@
 using MongoDB.Driver;
 using server.Data;
+using MongoDB.Driver.GridFS;
 
 namespace server.database;
 
@@ -11,11 +12,15 @@ public class Mongo
     public static MongoClient Client => LazyClient.Value;
     
     private readonly IMongoDatabase _database;
+    private readonly GridFSBucket _gridFs;
     
     public Mongo(string databaseName)
     {
         _database = Client.GetDatabase(databaseName);
+        _gridFs = new GridFSBucket(_database);
     }
   
     public IMongoCollection<RecipeItem> Recipes => _database.GetCollection<RecipeItem>("recipes");
+    
+    public GridFSBucket GridFS => _gridFs;
 }

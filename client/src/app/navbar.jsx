@@ -23,16 +23,18 @@ export default function Navbar() {
     const [showHeader, setShowHeader] = useState(false);
 
     const isActive = (active) => {
-        return pathname === active
+        return pathname === active;
     }
 
     const isHome = () => {
-        return pathname.startsWith('/app')
+        return pathname.startsWith('/app') || pathname.startsWith('/account')
     }
 
     useEffect(() => {
         async function fetchUser() {
-            await updateUser().then(setShowHeader(true));
+            await updateUser().then(
+                setShowHeader(true)
+        );
         }
         fetchUser();
     }, []);

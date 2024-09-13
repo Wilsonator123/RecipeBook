@@ -41,7 +41,7 @@ export default function Filters(){
                 {tags.length > 0 &&
             <div className="border p-2 flex gap-3 w-full max-h-[100px] rounded">
                 {tags.map((tag, index) => (
-                    <Tag value={tag} key={index} index={index} onClose={handleDelete} />
+                    <Tag value={tag} key={index} index={index} onClose={handleDelete} className="pr-2" />
                 ))}
                 </div>
                 }
