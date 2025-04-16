@@ -7,16 +7,20 @@ namespace server.utils;
 
 class Auth
 {
-    private static IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
 
     public Auth(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    public static string GenerateToken(string username)
+    public string GenerateToken(string username)
     {
         var secret = _configuration["Jwt:Secret"];
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            throw new Exception("JWT secret is not configured");
+        }
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(secret);
 
@@ -37,7 +41,7 @@ class Auth
         return tokenHandler.WriteToken(token);
     }
     
-    public static string ValidateToken(string token)
+    public string ValidateToken(string token)
     {
         var secret = _configuration["Jwt:Secret"];
         var tokenHandler = new JwtSecurityTokenHandler();

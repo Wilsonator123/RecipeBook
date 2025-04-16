@@ -17,9 +17,11 @@ public static class RecipeRoutes
         {
             endpoints.MapGet("/recipe/getRecipes", async (context) =>
             {
+                var auth = context.RequestServices.GetRequiredService<Auth>();
+
                 var cookie = CookieHelper.GetUserIdFromCookies(context);
 
-                string userId = Auth.ValidateToken(cookie);
+                string userId = auth.ValidateToken(cookie);
 
                 Response response = await Recipe.GetRecipes(userId);
 
@@ -41,8 +43,10 @@ public static class RecipeRoutes
             endpoints.MapGet("/recipe/getRecipe/{recipeid}", async context =>
             {
                 var cookie = CookieHelper.GetUserIdFromCookies(context);
+                var auth = context.RequestServices.GetRequiredService<Auth>();
 
-                string userId = Auth.ValidateToken(cookie);
+
+                string userId = auth.ValidateToken(cookie);
                 
                 
                 var recipeId = (string)context.Request.RouteValues["recipeid"];
@@ -76,10 +80,10 @@ public static class RecipeRoutes
 
             endpoints.MapPost("/recipe/createRecipe", async context =>
             {
-
+                var auth = context.RequestServices.GetRequiredService<Auth>();
                 var cookie = CookieHelper.GetUserIdFromCookies(context);
 
-                string userId = Auth.ValidateToken(cookie);
+                string userId = auth.ValidateToken(cookie);
 
                 var (isValid, userData) = await ValidateBody.Validate<CreateRecipeRequest>(context);
 
@@ -111,9 +115,10 @@ public static class RecipeRoutes
 
             endpoints.MapPost("/recipe/webscrape", async context =>
             {
+                var auth = context.RequestServices.GetRequiredService<Auth>();
                 var cookie = CookieHelper.GetUserIdFromCookies(context);
 
-                string userId = Auth.ValidateToken(cookie);
+                string userId = auth.ValidateToken(cookie);
 
                 var (isValid, userData) = await ValidateBody.Validate<WebscrapeRequest>(context);
 

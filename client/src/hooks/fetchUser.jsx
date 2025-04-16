@@ -8,7 +8,7 @@ export const getUser = async () => {
         if (!id) return false;
 
         const response = await fetch(
-            process.env.API_URL + `/user/getUser`,
+            `http://localhost:5000/user/getUser`,
             {
                 method: "GET",
                 headers: {

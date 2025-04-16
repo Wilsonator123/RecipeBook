@@ -10,9 +10,10 @@ public static class Database
     {
         var builder = new NpgsqlConnectionStringBuilder
         {
-	        Host = "localhost,5432",
-	        Username = "root",
-	        Password = File.ReadAllText("./db/password.txt"),
+	        Host = "localhost",
+					Port = 5432,
+	        Username = "postgres",
+	        Password = "Bulstrode_52",
 	        Database = "RecipeBook",
         };
 

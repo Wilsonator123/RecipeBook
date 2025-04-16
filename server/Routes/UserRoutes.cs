@@ -14,6 +14,7 @@ namespace server.Routes
             {
                 endpoints.MapGet("/user/getUser", async context =>
                 {
+                    var auth = context.RequestServices.GetRequiredService<Auth>();
                     var cookie = CookieHelper.GetUserIdFromCookies(context);
 
                     if (string.IsNullOrWhiteSpace(cookie))
@@ -23,7 +24,7 @@ namespace server.Routes
                         return;
                     }
 
-                    string userId = Auth.ValidateToken(cookie);
+                    string userId = auth.ValidateToken(cookie);
 
                     if (string.IsNullOrWhiteSpace(userId))
                     {
@@ -66,6 +67,7 @@ namespace server.Routes
 
                 endpoints.MapPost("/user/createUser", async context =>
                 {
+                    var auth = context.RequestServices.GetRequiredService<Auth>();
                     var (isValid, userData) = await ValidateBody.Validate<CreateUserRequest>(context);
                     if (!isValid)
                     {
@@ -79,7 +81,8 @@ namespace server.Routes
                     
                     if (response.Status)
                     {
-                        string token = Auth.GenerateToken(response.Data.ToString());
+                        Console.WriteLine(response);
+                        string token = auth.GenerateToken(response.Data.ToString());
                         context = CookieHelper.SetCookie(context, token);
                         context.Response.StatusCode = 201;
                         context.Response.ContentType = "application/json";
@@ -97,6 +100,7 @@ namespace server.Routes
                 
                 endpoints.MapPost("/user/login", async context =>
                 {   
+                    var auth = context.RequestServices.GetRequiredService<Auth>();
                     var (isValid, userData) = await ValidateBody.Validate<LoginRequest>(context);
                     
                     if (!isValid)
@@ -110,7 +114,8 @@ namespace server.Routes
                     
                     if (response.Status)
                     {
-                        string token = Auth.GenerateToken(response.Data.ToString());
+                        Console.WriteLine(response.Data);
+                        string token = auth.GenerateToken(response.Data.ToString());
                         context = CookieHelper.SetCookie(context, token);
                         context.Response.StatusCode = 200;
                         context.Response.ContentType = "application/json";

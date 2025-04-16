@@ -13,6 +13,7 @@ public class JwtMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        var auth = context.RequestServices.GetRequiredService<Auth>();
         var path = context.Request.Path;
         
         if (path.StartsWithSegments("/user") || path.StartsWithSegments("/health"))
@@ -30,7 +31,7 @@ public class JwtMiddleware
             return;
         }
 
-        string userId = Auth.ValidateToken(cookie);
+        string userId = auth.ValidateToken(cookie);
 
         if (string.IsNullOrWhiteSpace(userId))
         {

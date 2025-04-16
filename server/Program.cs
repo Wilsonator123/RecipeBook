@@ -3,7 +3,10 @@ using server.utils;
 using server.recipe;
 
 var builder = WebApplication.CreateBuilder(args);
-var auth = new Auth(builder.Configuration);
+
+builder.Configuration.AddUserSecrets<Program>();
+
+builder.Services.AddSingleton<Auth>();
 
 builder.Services.AddCors(options =>
 {
@@ -16,7 +19,7 @@ builder.Services.AddCors(options =>
     });
 });
 // Add configuration to access user-secrets
-builder.Configuration.AddUserSecrets<Program>();
+
 
 builder.Services.AddAuthentication();
 
