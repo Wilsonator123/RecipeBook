@@ -10,4 +10,4 @@ R - Built a well-designed website which met all criteria and recieved high marks
 
 ## Tech-stack
 
-NestJS, JavaScript, C#, MongoDB, Terraform
+NestJS, JavaScript, C#, MongoDB
